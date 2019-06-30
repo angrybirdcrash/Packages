@@ -1,0 +1,26 @@
+sudo su
+cd ~
+yum -y remove mariadb*
+yum -y install wget libaio numactl autoconf
+wget https://mirrors.163.com/mysql/Downloads/MySQL-5.6/MySQL-server-5.6.44-1.el7.x86_64.rpm
+wget https://mirrors.163.com/mysql/Downloads/MySQL-5.6/MySQL-client-5.6.44-1.el7.x86_64.rpm
+rpm -ivh MySQL-server-5.6.44-1.el7.x86_64.rpm
+rpm -ivh MySQL-client-5.6.44-1.el7.x86_64.rpm
+rm -rf MySQL-server-5.6.44-1.el7.x86_64.rpm
+rm -rf MySQL-client-5.6.44-1.el7.x86_64.rpm
+chkconfig mysql on
+service mysql start
+
+#获得初始密码，记得先复制出来！
+cat /root/.mysql_secret
+#登录mysql：
+mysql -u root -p
+#修改密码，允许远程访问，退出mysql：
+set password for root@localhost = password('123'); 
+grant all privileges on *.* to 'root' @'%' identified by '你的密码';
+flush privileges;
+exit;
+
+#改配置文件，重启mysql：
+wget -P /etc https://raw.githubusercontent.com/angrybirdcrash/Packages/master/mysql/my.cnf
+service mysql restart
